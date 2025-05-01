@@ -1,6 +1,7 @@
 import React, { createContext, useState } from "react";
 
 //Global context for calculating the Completion TIme Average of the tasks
+//GenAI update
 
 type AverageTimeType = {
     averages: {

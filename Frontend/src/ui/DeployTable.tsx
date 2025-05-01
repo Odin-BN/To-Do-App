@@ -5,6 +5,7 @@ import AverageTimeContext from '../context/AverageTimeContext'
 import AveragesBox from './AveragesBox';
 
 //Table to display the tasks of the list, and also where the sorting and pagination occurs
+//GenAI update
 
 const DeployTable: React.FC = () => {
     //const [checkedState, setCheckedState]= useState<boolean[]>([false, false, false, false]);
