@@ -1,10 +1,14 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
+// Vite configuration file
+// This file configures the Vite development server and plugins for the project.
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(), // Enables React support with Vite using the official plugin.
+  ],
   server: {
-    port: 8080,
-  }
-})
+    port: 8080, // Configures the development server to run on port 8080.
+  },
+});

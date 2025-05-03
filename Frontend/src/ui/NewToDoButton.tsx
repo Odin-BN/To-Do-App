@@ -2,28 +2,48 @@ import React, { useContext, useState } from 'react';
 import ToDoModal from './ToDoModal'; 
 import SearchContext from '../context/SearchContext';
 
-//Component of the button to create a new To Do
-
+/**
+ * NewToDoButton Component
+ * 
+ * This component renders a button that, when clicked, opens a modal for creating a new "To Do" task.
+ * After the modal is closed, it triggers a refresh of the task list by calling `fetchTasks` from the `SearchContext`.
+ * 
+ * @returns {JSX.Element} A button and a modal for creating a new task.
+ */
 const NewToDoButton: React.FC = () => {
-    const [showModal, setShowModal] = useState(false);
-    const {fetchTasks } = useContext(SearchContext)
+    // State to manage the visibility of the "To Do" modal.
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    // Access the `fetchTasks` function from the SearchContext to refresh the task list.
+    const { fetchTasks } = useContext(SearchContext);
 
     return (
         <>
-            {/*The button of new to do*/}
-            <button style={{ 
-                padding: "0px", 
-                position: "absolute", 
-                top: "243px", 
-                width: "140px",
-                height: "40px",
-                textAlign: "center",}} 
-                onClick={() => setShowModal(true)}>+ New To Do</button> 
+            {/* Button to open the "To Do" modal */}
+            <button 
+                style={{ 
+                    padding: "0px", 
+                    position: "absolute", 
+                    top: "243px", 
+                    width: "140px",
+                    height: "40px",
+                    textAlign: "center",
+                }} 
+                onClick={() => setIsModalVisible(true)} // Show the modal when clicked.
+            >
+                + New To Do
+            </button> 
 
-            {/*The modal after doing click*/}
-            {showModal && (<ToDoModal onClose={() => {setShowModal(false); fetchTasks()}} /> 
-        )}
-      </>
+            {/* Modal for creating a new "To Do" task */}
+            {isModalVisible && (
+                <ToDoModal 
+                    onClose={() => {
+                        setIsModalVisible(false); // Hide the modal when closed.
+                        fetchTasks(); // Refresh the task list after closing the modal.
+                    }} 
+                />
+            )}
+        </>
     );
 };
 

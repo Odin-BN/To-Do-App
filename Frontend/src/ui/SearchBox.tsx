@@ -1,30 +1,42 @@
 import React, { useContext } from "react";
 import SearchContext from "../context/SearchContext";
 
-//Component for the Search box for the Task Name to filter
-
-const SearchBox: React.FC= () => {
-    const { NameSearch, setnameSearch } = useContext(SearchContext) || {};
+/**
+ * SearchBox Component
+ * 
+ * This component renders an input box for filtering tasks by their name.
+ * It consumes the `SearchContext` to manage the search term and update it dynamically.
+ * 
+ * @returns {JSX.Element} An input box for entering a task name to filter the task list.
+ */
+const SearchBox: React.FC = () => {
+    // Access the current name search term and its setter function from SearchContext.
+    const { nameSearch, setNameSearch } = useContext(SearchContext) || {};
 
     return (
-        <div style={{ padding: "0px", position: "absolute",top: "35px", left: "100px",}}>
-            <input 
-            type="text"
-            value={NameSearch}
-            onChange={(e) => setnameSearch(e.target.value)}
-            placeholder="text..."
+        <div
             style={{
-                width: '1500px',
-                padding: '10px',
-                fontSize: '16px',
-                border: '1px solid black',
-                borderRadius: '4px',
+                padding: "0px",
+                position: "absolute",
+                top: "35px", // Positions the input box vertically.
+                left: "100px", // Positions the input box horizontally.
             }}
+        >
+            <input
+                type="text"
+                value={nameSearch} // Binds the input value to the current name search term.
+                onChange={(e) => setNameSearch(e.target.value)} // Updates the name search term on input change.
+                placeholder="Enter task name..." // Placeholder text to guide the user.
+                style={{
+                    width: "1500px", // Sets the width of the input box.
+                    padding: "10px", // Adds padding inside the input box.
+                    fontSize: "16px", // Sets the font size for the input text.
+                    border: "1px solid black", // Adds a border around the input box.
+                    borderRadius: "4px", // Rounds the corners of the input box.
+                }}
             />
-            <p>{/* */}</p>
         </div>
+    );
+};
 
-    )
-}
-
-export default SearchBox
+export default SearchBox;
