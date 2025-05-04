@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import SearchContext from '../context/SearchContext';
+import React from 'react';
+//import SearchContext from '../context/SearchContext';
 
 /**
  * SearchButton Component
@@ -11,7 +11,7 @@ import SearchContext from '../context/SearchContext';
  */
 const SearchButton: React.FC = () => {
     // Access the `fetchTasks` function from the SearchContext to fetch filtered tasks.
-    const { fetchTasks } = useContext(SearchContext);
+    //const { fetchTasks } = useContext(SearchContext);
 
     return (
         <>

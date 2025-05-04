@@ -118,13 +118,16 @@ const DeployTable: React.FC = () => {
 
     /**
      * Handles sorting tasks by a specific field.
+     * Cycles the sorting order through `null`, `"asc"`, and `"desc"`.
      * @param {"priority" | "duedate"} field - The field to sort by.
      */
     const handleSort = (field: "priority" | "duedate") => {
         if (field === "priority") {
-            setSortPriority(sortPriority === "asc" ? "desc" : "asc");
+            // Cycle sortPriority through null -> "asc" -> "desc" -> null
+            setSortPriority((prev) => (prev === null ? "asc" : prev === "asc" ? "desc" : null));
         } else if (field === "duedate") {
-            setSortDueDate(sortDueDate === "asc" ? "desc" : "asc");
+            // Cycle sortDueDate through null -> "asc" -> "desc" -> null
+            setSortDueDate((prev) => (prev === null ? "asc" : prev === "asc" ? "desc" : null));
         }
     };
 
