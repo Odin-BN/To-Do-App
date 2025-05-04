@@ -1,6 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import ToDoModal from './ToDoModal'; 
-import SearchContext from '../context/SearchContext';
 
 /**
  * NewToDoButton Component
@@ -15,7 +14,6 @@ const NewToDoButton: React.FC = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     // Access the `fetchTasks` function from the SearchContext to refresh the task list.
-    const { fetchTasks } = useContext(SearchContext);
 
     return (
         <>
@@ -39,7 +37,6 @@ const NewToDoButton: React.FC = () => {
                 <ToDoModal 
                     onClose={() => {
                         setIsModalVisible(false); // Hide the modal when closed.
-                        fetchTasks(); // Refresh the task list after closing the modal.
                     }} 
                 />
             )}

@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * TaskServices provides the business logic for managing tasks.
- * It includes methods for CRUD operations, filtering tasks, and calculating statistics.
+ * It includes methods for CRUD operations, filtering, sorting, pagination, and calculating statistics.
  */
 @Service
 public class TaskServices {
@@ -25,31 +26,31 @@ public class TaskServices {
     private final TaskRepository taskRepository = new TaskRepository(); // Repository for task persistence
 
     /**
-     * Retrieves a list of tasks filtered by name, priority, and status.
+     * Retrieves a list of tasks filtered by name, priority, and status, with pagination and sorting.
      *
      * @param nameFilter Optional filter for task names.
      * @param priorityFilter Optional filter for task priority levels.
      * @param statusFilter Optional filter for task status (e.g., Done/Undone).
-     * @return A list of tasks matching the specified filters.
+     * @param page The page number for pagination (0-based index).
+     * @param size The number of tasks per page.
+     * @param sortPriority Sorting order for priority (asc, desc, or null).
+     * @param sortDueDate Sorting order for due date (asc, desc, or null).
+     * @return A paginated and sorted list of tasks matching the specified filters.
      */
-    public List<TaskOUT> obtainTasks(String nameFilter, String priorityFilter, String statusFilter) {
+    public List<TaskOUT> obtainTasks(String nameFilter, String priorityFilter, String statusFilter, int page, int size, String sortPriority, String sortDueDate) {
         List<TaskOUT> tasks = taskRepository.findAll();
 
-        // Filter tasks by name
+        // Apply filtering
         if (nameFilter != null && !nameFilter.isEmpty()) {
             tasks = tasks.stream()
                     .filter(task -> task.getName().toLowerCase().contains(nameFilter.toLowerCase()))
                     .toList();
         }
-
-        // Filter tasks by priority
         if (priorityFilter != null && !priorityFilter.equalsIgnoreCase("All")) {
             tasks = tasks.stream()
                     .filter(task -> task.getPriority().equalsIgnoreCase(priorityFilter))
                     .toList();
         }
-
-        // Filter tasks by completion status (flag)
         if (statusFilter != null && !statusFilter.equalsIgnoreCase("All")) {
             boolean isDone = statusFilter.equalsIgnoreCase("Done");
             tasks = tasks.stream()
@@ -57,7 +58,36 @@ public class TaskServices {
                     .toList();
         }
 
-        return tasks;
+        // Apply sorting
+        if (sortPriority != null) {
+            // Define a custom priority order: Low < Medium < High
+            Comparator<TaskOUT> priorityComparator = Comparator.comparingInt(task -> {
+                switch (task.getPriority().toLowerCase()) {
+                    case "low": return 1;
+                    case "medium": return 2;
+                    case "high": return 3;
+                    default: return Integer.MAX_VALUE; // Handle unexpected values
+                }
+            });
+
+            // Apply ascending or descending order based on the sortPriority parameter
+            tasks = sortPriority.equalsIgnoreCase("desc")
+                    ? tasks.stream().sorted(priorityComparator.reversed()).toList()
+                    : tasks.stream().sorted(priorityComparator).toList();
+        }
+
+        if (sortDueDate != null) {
+            Comparator<TaskOUT> dueDateComparator = Comparator.comparing(TaskOUT::getDueDate, Comparator.nullsLast(String::compareTo));
+            tasks = sortDueDate.equalsIgnoreCase("desc") ? tasks.stream().sorted(dueDateComparator.reversed()).toList() : tasks.stream().sorted(dueDateComparator).toList();
+        }
+
+        // Apply pagination
+        int fromIndex = page * size;
+        int toIndex = Math.min(fromIndex + size, tasks.size());
+        if (fromIndex > tasks.size()) {
+            return List.of(); // Return an empty list if the page is out of bounds
+        }
+        return tasks.subList(fromIndex, toIndex);
     }
 
     /**
@@ -186,3 +216,4 @@ public class TaskServices {
         return String.format("%d days, %d hours, %d minutes", days, hours, minutes);
     }
 }
+

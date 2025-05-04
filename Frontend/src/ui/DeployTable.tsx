@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import SearchContext from '../context/SearchContext';
 import { Task } from './Task';
 import AverageTimeContext from '../context/AverageTimeContext';
@@ -19,15 +19,12 @@ import AveragesBox from './AveragesBox';
  * @returns {JSX.Element} A table with task management features.
  */
 const DeployTable: React.FC = () => {
-    // Access task-related functions and data from SearchContext.
     const { fetchTasks, tasks } = useContext(SearchContext) ?? { tasks: [] };
-
-    // Access average-related functions from AverageTimeContext.
     const { fetchAverages } = useContext(AverageTimeContext);
 
     // State for sorting tasks.
-    const [sortField, setSortField] = useState<string | null>(null);
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+    const [sortPriority, setSortPriority] = useState<"asc" | "desc" | null>(null);
+    const [sortDueDate, setSortDueDate] = useState<"asc" | "desc" | null>(null);
 
     // State for managing modals and task editing.
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -36,8 +33,15 @@ const DeployTable: React.FC = () => {
     const [editedTask, setEditedTask] = useState({ name: "", priority: "", deadline: "" });
 
     // State for pagination.
-    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(0); // Backend uses 0-based indexing
     const itemsPerPage = 10;
+
+    /**
+     * Fetches tasks whenever sorting or pagination parameters change.
+     */
+    useEffect(() => {
+        fetchTasks(currentPage, itemsPerPage, sortPriority, sortDueDate);
+    }, [currentPage, sortPriority, sortDueDate, tasks]);
 
     /**
      * Opens the edit modal for a specific task.
@@ -70,7 +74,7 @@ const DeployTable: React.FC = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(editedTask),
             });
-            fetchTasks();
+            fetchTasks(currentPage, itemsPerPage, sortPriority, sortDueDate);
             setIsEditModalOpen(false);
         } catch (error) {
             console.error("Error updating task:", error);
@@ -85,7 +89,7 @@ const DeployTable: React.FC = () => {
         if (!selectedTask) return;
         try {
             await fetch(`http://localhost:9090/todos/${selectedTask.id}`, { method: "DELETE" });
-            fetchTasks();
+            fetchTasks(currentPage, itemsPerPage, sortPriority, sortDueDate);
             fetchAverages();
             setIsDeleteModalOpen(false);
         } catch (error) {
@@ -105,24 +109,10 @@ const DeployTable: React.FC = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ flag: taskFlag }),
             });
-            fetchTasks();
+            fetchTasks(currentPage, itemsPerPage, sortPriority, sortDueDate);
             fetchAverages();
         } catch (error) {
             console.error("Error updating task status:", error);
-        }
-    };
-
-    /**
-     * Toggles the completion status of all tasks on the current page.
-     */
-    const handleFlagAllTasks = async () => {
-        try {
-            const tasksToUpdate = paginatedTasks.filter(task => task.flag === areAllTasksCompleted);
-            await Promise.all(tasksToUpdate.map(task => handleCheckboxChange(task.id, !areAllTasksCompleted)));
-            fetchTasks();
-            fetchAverages();
-        } catch (error) {
-            console.error("Error updating task statuses:", error);
         }
     };
 
@@ -131,47 +121,29 @@ const DeployTable: React.FC = () => {
      * @param {"priority" | "duedate"} field - The field to sort by.
      */
     const handleSort = (field: "priority" | "duedate") => {
-        if (sortField === field) {
-            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-        } else {
-            setSortField(field);
-            setSortOrder("asc");
+        if (field === "priority") {
+            setSortPriority(sortPriority === "asc" ? "desc" : "asc");
+        } else if (field === "duedate") {
+            setSortDueDate(sortDueDate === "asc" ? "desc" : "asc");
         }
     };
 
     /**
-     * Converts priority levels to numeric values for sorting.
-     * @param {string} priority - The priority level (High, Medium, Low).
-     * @returns {number} The numeric value of the priority.
+     * Toggles the completion status of all tasks on the current page.
      */
-    const getPriorityValue = (priority: string) => {
-        const priorityMap: { [key: string]: number } = { High: 3, Medium: 2, Low: 1 };
-        return priorityMap[priority] || 0;
+    const handleFlagAllTasks = async () => {
+        try {
+            const tasksToUpdate = tasks.filter(task => task.flag === areAllTasksCompleted);
+            await Promise.all(tasksToUpdate.map(task => handleCheckboxChange(task.id, !areAllTasksCompleted)));
+            fetchTasks(currentPage, itemsPerPage, sortPriority, sortDueDate);
+            fetchAverages();
+        } catch (error) {
+            console.error("Error updating task statuses:", error);
+        }
     };
 
-    // Sort tasks based on the selected field and order.
-    const sortedTasks: Task[] = (sortField
-        ? [...tasks].sort((a, b) => {
-            let comparison = 0;
-            if (sortField === "priority") {
-                comparison = getPriorityValue(a.priority) - getPriorityValue(b.priority);
-            } else if (sortField === "duedate") {
-                const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;
-                const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0;
-                comparison = dateA - dateB;
-            }
-            return sortOrder === "asc" ? comparison : -comparison;
-        })
-        : tasks) as Task[];
-
-    // Calculate the total number of pages.
-    const totalPages = Math.ceil(sortedTasks.length / itemsPerPage);
-
-    // Paginate tasks for the current page.
-    const paginatedTasks = sortedTasks.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
     // Check if all tasks on the current page are completed.
-    const areAllTasksCompleted = paginatedTasks.length > 0 && paginatedTasks.every(task => task.flag);
+    const areAllTasksCompleted = tasks.length > 0 && tasks.every(task => task.flag);
 
     return (
         <div>
@@ -188,10 +160,11 @@ const DeployTable: React.FC = () => {
                 <thead>
                     <tr style={{ backgroundColor: "rgb(209, 204, 204)" }}>
                         <th style={{ width: "5%", border: "1px solid black", padding: "10px" }}>
-                            <input
+                            <input 
                                 type="checkbox"
                                 checked={areAllTasksCompleted}
                                 onChange={handleFlagAllTasks}
+                                
                             />
                         </th>
                         <th style={{ width: "20%", border: "1px solid black", padding: "10px" }}>
@@ -201,13 +174,13 @@ const DeployTable: React.FC = () => {
                             onClick={() => handleSort("priority")}
                             style={{ width: "20%", border: "1px solid black", padding: "10px", cursor: "pointer" }}
                         >
-                            Priority {sortField === "priority" ? (sortOrder === "asc" ? "<" : ">") : ""}
+                            Priority {sortPriority ? (sortPriority === "asc" ? "<" : ">") : ""}
                         </th>
                         <th
                             onClick={() => handleSort("duedate")}
                             style={{ width: "10%", border: "1px solid black", padding: "10px", cursor: "pointer" }}
                         >
-                            Due Date {sortField === "duedate" ? (sortOrder === "asc" ? "<" : ">") : ""}
+                            Due Date {sortDueDate ? (sortDueDate === "asc" ? "<" : ">") : ""}
                         </th>
                         <th style={{ width: "10%", border: "1px solid black", padding: "10px" }}>
                             Actions
@@ -215,20 +188,18 @@ const DeployTable: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {paginatedTasks.map((task: Task) => {
-                        const isCompleted = task.flag;
+                    {tasks.map((task: Task) => {
                         return (
-                            <tr
-                                key={task.id}
+                            <tr key={task.id}
                                 style={{
-                                    backgroundColor: isCompleted ? "white" : task.rowColor,
-                                    textDecoration: isCompleted ? "line-through" : "none",
+                                    backgroundColor: task.flag ? "white" : task.rowColor,
+                                    textDecoration: task.flag ? "line-through" : "none",
                                 }}
-                            >
-                                <td style={{ border: "1px solid black", padding: "10px", textAlign: "center" }}>
+                            >   
+                                <td style={{ border: "1px solid black", padding: "10px", textAlign: "center"}}>
                                     <input
                                         type="checkbox"
-                                        checked={isCompleted}
+                                        checked={task.flag}
                                         onChange={(e) => handleCheckboxChange(task.id, e.target.checked)}
                                     />
                                 </td>
@@ -236,13 +207,13 @@ const DeployTable: React.FC = () => {
                                 <td style={{ border: "1px solid black", padding: "10px" }}>{task.priority}</td>
                                 <td style={{ border: "1px solid black", padding: "10px" }}>{task.dueDate}</td>
                                 <td style={{ border: "1px solid black", padding: "10px" }}>
-                                    {!isCompleted && (
+                                    {!task.flag && (
                                         <>
                                             <button onClick={() => handleEditClick(task)}>Edit</button>
                                             <button onClick={() => handleRemoveClick(task)}>Remove</button>
                                         </>
                                     )}
-                                </td>
+                                </td>  
                             </tr>
                         );
                     })}
@@ -347,13 +318,11 @@ const DeployTable: React.FC = () => {
 
             {/* Pagination controls */}
             <div style={{ top: "930px", left: "800px", textAlign: "center", position: "absolute" }}>
-                <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+                <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 0}>
                     Previous
                 </button>
-                <span style={{ margin: "0 10px" }}>
-                    Page {currentPage} of {totalPages}
-                </span>
-                <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                <span style={{ margin: "0 10px" }}>Page {currentPage + 1}</span>
+                <button onClick={() => setCurrentPage(currentPage + 1)} disabled={tasks.length < itemsPerPage}>
                     Next
                 </button>
             </div>

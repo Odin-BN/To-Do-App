@@ -22,7 +22,7 @@ type SearchContextType = {
     setNameSearch: (text: string) => void;
     setPrioritySearch: (priority: string) => void;
     setFlagSearch: (flag: string) => void;
-    fetchTasks: () => void;
+    fetchTasks: (page: number, size: number, sortPriority: string | null, sortDueDate: string | null) => void;
 };
 
 /**
@@ -62,25 +62,29 @@ export const SearchProvider = ({ children }: SearchProviderProps) => {
     /**
      * Fetches tasks from the backend API based on the current search criteria.
      * - Constructs a dynamic URL with query parameters for name, priority, and flag searches.
+     * - Includes pagination and sorting parameters.
      * - Updates the `tasks` state with the fetched data.
      * - Logs an error to the console if the fetch operation fails.
      */
-    const fetchTasks = async () => {
-        let searchUrl = "http://localhost:9090/todos?"; // Base API endpoint.
+    const fetchTasks = async (page: number, size: number, sortPriority: string | null, sortDueDate: string | null) => {
+        let searchUrl = `http://localhost:9090/todos?page=${page}&size=${size}`; // Base API endpoint with pagination.
 
         // Append query parameters based on search criteria.
         if (nameSearch) {
-            searchUrl += `nameFilter=${encodeURIComponent(nameSearch)}&`;
+            searchUrl += `&nameFilter=${encodeURIComponent(nameSearch)}`;
         }
         if (prioritySearch && prioritySearch !== "All") {
-            searchUrl += `priorityFilter=${encodeURIComponent(prioritySearch)}&`;
+            searchUrl += `&priorityFilter=${encodeURIComponent(prioritySearch)}`;
         }
         if (flagSearch && flagSearch !== "All") {
-            searchUrl += `statusFilter=${encodeURIComponent(flagSearch)}`;
+            searchUrl += `&statusFilter=${encodeURIComponent(flagSearch)}`;
         }
-
-        // Remove trailing "&" if present.
-        searchUrl = searchUrl.replace(/&$/, "");
+        if (sortPriority) {
+            searchUrl += `&sortPriority=${sortPriority}`;
+        }
+        if (sortDueDate) {
+            searchUrl += `&sortDueDate=${sortDueDate}`;
+        }
 
         try {
             const response = await fetch(searchUrl, {

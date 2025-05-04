@@ -26,7 +26,7 @@ const SearchButton: React.FC = () => {
                     height: "50px", // Sets the height of the button.
                     textAlign: "center", // Centers the text inside the button.
                 }}
-                onClick={() => fetchTasks()} // Calls the `fetchTasks` function when clicked.
+                //onClick={() => fetchTasks()} // Calls the `fetchTasks` function when clicked.
             >
                 Search
             </button> 

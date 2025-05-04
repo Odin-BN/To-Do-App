@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * TaskController handles HTTP requests for managing tasks.
- * It provides endpoints for CRUD operations and task-related statistics.
+ * It provides endpoints for CRUD operations, filtering, sorting, pagination, and task-related statistics.
  */
 @RestController
 @CrossOrigin(origins = "http://localhost:8080")
@@ -27,24 +27,37 @@ public class TaskController {
     TaskServices taskServices; // Service layer for task operations
 
     /**
-     * Retrieves a list of tasks filtered by name, priority, and status.
+     * Retrieves a list of tasks filtered by name, priority, and status, with pagination and sorting.
      *
      * @param nameFilter Optional filter for task names.
      * @param priorityFilter Optional filter for task priority levels.
      * @param statusFilter Optional filter for task status (e.g., Done/Undone).
-     * @return A list of tasks matching the specified filters.
+     * @param page The page number for pagination (0-based index).
+     * @param size The number of tasks per page.
+     * @param sortPriority Sorting order for priority (asc, desc, or null).
+     * @param sortDueDate Sorting order for due date (asc, desc, or null).
+     * @return A paginated and sorted list of tasks matching the specified filters.
      */
     @GetMapping()
-    public List<TaskOUT> obtainTasks(
+    public ResponseEntity<List<TaskOUT>> obtainTasks(
             @RequestParam(required = false) String nameFilter,
             @RequestParam(required = false) String priorityFilter,
-            @RequestParam(required = false) String statusFilter
+            @RequestParam(required = false) String statusFilter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String sortPriority,
+            @RequestParam(required = false) String sortDueDate
     ) {
-        // Log the received filter parameters for debugging
+        // Log the received parameters for debugging
         System.out.println("Received parameters - NameFilter: " + nameFilter + 
                            ", PriorityFilter: " + priorityFilter + 
-                           ", StatusFilter: " + statusFilter);
-        return taskServices.obtainTasks(nameFilter, priorityFilter, statusFilter);
+                           ", StatusFilter: " + statusFilter + 
+                           ", Page: " + page + 
+                           ", Size: " + size + 
+                           ", SortPriority: " + sortPriority + 
+                           ", SortDueDate: " + sortDueDate);
+        List<TaskOUT> tasks = taskServices.obtainTasks(nameFilter, priorityFilter, statusFilter, page, size, sortPriority, sortDueDate);
+        return ResponseEntity.ok(tasks);
     }
 
     /**
