@@ -24,6 +24,7 @@ const SearchBox: React.FC = () => {
         >
             <input
                 type="text"
+                data-testid="name-search-box" // Add a unique test ID
                 value={nameSearch} // Binds the input value to the current name search term.
                 onChange={(e) => setNameSearch(e.target.value)} // Updates the name search term on input change.
                 placeholder="Enter task name..." // Placeholder text to guide the user.

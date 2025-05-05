@@ -13,7 +13,7 @@ import AveragesBox from "./AveragesBox";
  * Displays a table of tasks with sorting, pagination, and modals for editing/deleting tasks.
  */
 const DeployTable: React.FC = () => {
-    const { tasks } = useContext(SearchContext) ?? { tasks: [] };
+    const { tasks, nameSearch, prioritySearch, flagSearch } = useContext(SearchContext) ?? { tasks: [] };
     const { fetchAndSetTasks, updateTaskById, deleteTaskById, 
         toggleTaskCompletion, toggleAllTasksCompletion, handleSort, sortPriority, sortDueDate } = useTaskActions();
 
@@ -31,7 +31,7 @@ const DeployTable: React.FC = () => {
      */
     useEffect(() => {
         fetchAndSetTasks(currentPage, itemsPerPage, sortPriority, sortDueDate);
-    }, [sortPriority, sortDueDate, tasks, currentPage]);
+    }, [sortPriority, sortDueDate, tasks, currentPage, nameSearch, prioritySearch, flagSearch]); // Ensure these dependencies are included
 
 
     const handleEditClick = (task: Task) => {

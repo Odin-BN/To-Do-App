@@ -24,7 +24,12 @@ const OptionsBox: React.FC = () => {
                 left: "100px", // Positions the dropdown horizontally.
             }}
         >
+            {/* Add a label for accessibility */}
+            <label htmlFor="priority-dropdown" style={{ display: "block", marginBottom: "8px" }}>
+                Priority
+            </label>
             <select
+                id="priority-dropdown" // Associate the label with the dropdown
                 value={prioritySearch} // Binds the dropdown value to the current priority filter.
                 onChange={(e) => setPrioritySearch(e.target.value)} // Updates the priority filter on change.
                 style={{

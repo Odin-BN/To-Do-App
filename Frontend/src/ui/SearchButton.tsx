@@ -1,17 +1,22 @@
-import React from 'react';
-//import SearchContext from '../context/SearchContext';
+import React, { useContext } from "react";
+//import SearchContext from "../context/SearchContext";
+import { useTaskActions } from "../hooks/useTaskActions";
 
 /**
  * SearchButton Component
  * 
- * This component renders a button that triggers the `fetchTasks` function from the `SearchContext`.
+ * This component renders a button that triggers the `fetchAndSetTasks` function.
  * The button is used to fetch and display the list of tasks filtered by the current search criteria.
  * 
  * @returns {JSX.Element} A button to initiate the task search.
  */
 const SearchButton: React.FC = () => {
-    // Access the `fetchTasks` function from the SearchContext to fetch filtered tasks.
-    //const { fetchTasks } = useContext(SearchContext);
+    //const { nameSearch, prioritySearch, flagSearch } = useContext(SearchContext);
+    const { fetchAndSetTasks } = useTaskActions();
+
+    const handleSearch = () => {
+        fetchAndSetTasks(0, 10, null, null); // Trigger task fetching explicitly
+    };
 
     return (
         <>
@@ -26,7 +31,7 @@ const SearchButton: React.FC = () => {
                     height: "50px", // Sets the height of the button.
                     textAlign: "center", // Centers the text inside the button.
                 }}
-                //onClick={() => fetchTasks()} // Calls the `fetchTasks` function when clicked.
+                onClick={handleSearch} // Calls the `fetchAndSetTasks` function when clicked.
             >
                 Search
             </button> 
