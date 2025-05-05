@@ -84,18 +84,6 @@ describe("NewToDoButton Component", () => {
             expect(screen.queryByText("Create a New Task")).not.toBeInTheDocument();
         });
     });
-    /*
-    it("does not allow saving a task without a name", async () => {
-        
-        // Open the modal
-        fireEvent.click(screen.getByText("+ New To Do"));
-
-        // Click the Save Task button without entering a name
-        fireEvent.click(screen.getByText("Save Task"));
-
-        // Check that an error message is displayed
-        expect(await screen.findByText("Task name cannot be empty")).toBeInTheDocument();
-    });*/
     
     it("does not allow saving a task with a name longer than 120 characters", async () => {
         
@@ -112,51 +100,6 @@ describe("NewToDoButton Component", () => {
         // Check that an error message is displayed
         expect(await screen.findByText("Task name cannot exceed 120 characters.")).toBeInTheDocument();
     });
-    /*
-    it("saves a task with valid inputs and closes the modal", async () => {
-        globalThis.fetch = vi.fn(() =>
-            Promise.resolve({
-                ok: true,
-                status: 200,
-                statusText: "OK",
-                headers: new Headers(),
-                redirected: false,
-                type: "basic",
-                url: "http://localhost:9090/todos",
-                json: () => Promise.resolve({}),
-            } as Response)
-        );
-
-        render(
-            <SearchContext.Provider value={mockSearchContextValue}>
-                <NewToDoButton />
-            </SearchContext.Provider>
-        );
-
-        // Open the modal
-        fireEvent.click(screen.getByText("+ New To Do"));
-
-        // Enter valid inputs
-        const taskNameInput = screen.getByLabelText("Task Name (max 120 characters)");
-        fireEvent.change(taskNameInput, { target: { value: "New Task" } });
-
-        const priorityDropdown = screen.getByLabelText("Priority");
-        fireEvent.change(priorityDropdown, { target: { value: "High" } });
-
-        const deadlineInput = screen.getByLabelText("Deadline");
-        fireEvent.change(deadlineInput, { target: { value: "2025-12-31" } });
-
-        // Click the Save Task button
-        fireEvent.click(screen.getByText("Save Task"));
-
-        // Check that the modal is closed
-        await waitFor(() => {
-            expect(screen.queryByText("Create a New Task")).not.toBeInTheDocument();
-        });
-
-        // Verify that fetchTasks is called to refresh the task list
-        expect(mockUseTaskActions.fetchAndSetTasks).toHaveBeenCalled();
-    });*/
     
     it("displays an error message if saving the task fails", async () => {
         globalThis.fetch = vi.fn(() =>

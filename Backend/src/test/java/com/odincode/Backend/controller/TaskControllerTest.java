@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,7 +22,7 @@ class TaskControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean // Mock the TaskServices bean
+    @Autowired
     private TaskServices taskServices;
 
     
@@ -31,7 +30,7 @@ class TaskControllerTest {
     @Test
     void shouldSaveNewTask() throws Exception {
         // Arrange
-        TaskAdd taskAdd = new TaskAdd("New Task", "Low", "2025-12-31");
+        //TaskAdd taskAdd = new TaskAdd("New Task", "Low", "2025-12-31");
         when(taskServices.saveTask(Mockito.any(TaskAdd.class))).thenReturn(null);
 
         // Act & Assert

@@ -20,7 +20,6 @@ const DeployTable: React.FC = () => {
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    //const [editedTask, setEditedTask] = useState({name: "", priority: "", deadline: ""})
 
     // State for pagination.
     const [currentPage, setCurrentPage] = useState<number>(0); // Backend uses 0-based indexing

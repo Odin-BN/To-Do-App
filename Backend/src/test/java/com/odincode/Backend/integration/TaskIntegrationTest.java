@@ -1,7 +1,6 @@
 package com.odincode.Backend.integration;
 
 import com.odincode.Backend.model.TaskAdd;
-import com.odincode.Backend.model.TaskModel;
 import com.odincode.Backend.model.TaskOUT;
 import com.odincode.Backend.repository.TaskRepository;
 import org.junit.jupiter.api.Test;

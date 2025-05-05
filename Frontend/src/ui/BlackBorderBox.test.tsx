@@ -105,52 +105,6 @@ describe("BlackBorderBox Component", () => {
         // Ensure no errors occur when there are no tasks
         expect(screen.getByPlaceholderText("Enter task name...")).toBeInTheDocument();
     });
-    /*
-    it("calls fetchTasks when nameSearch, prioritySearch, or flagSearch changes", async () => {
-        // Mock fetchTasks
-        const mockFetchTasks = vi.fn();
-
-        // Mock SearchContext with fetchTasks
-        const mockSearchContextValueWithFetch = {
-            ...mockSearchContextValue,
-            fetchTasks: mockFetchTasks, // Replace fetchAndSetTasks with fetchTasks
-        };
-
-        render(
-            <SearchContext.Provider value={mockSearchContextValueWithFetch}>
-                <BlackBorderBox />
-            </SearchContext.Provider>
-        );
-
-        // Use getByTestId to target the specific search box
-        const searchBox = screen.getByTestId("name-search-box");
-        fireEvent.change(searchBox, { target: { value: "Task 1" } });
-
-        // Verify that fetchTasks is called after nameSearch changes
-        await waitFor(() => {
-            expect(mockFetchTasks).toHaveBeenCalled();
-        });
-
-        // Update the priority dropdown
-        const priorityDropdown = screen.getByLabelText("Priority");
-        fireEvent.change(priorityDropdown, { target: { value: "High" } });
-
-        // Verify that fetchTasks is called after prioritySearch changes
-        await waitFor(() => {
-            expect(mockFetchTasks).toHaveBeenCalled();
-        });
-
-        // Update the state dropdown
-        const stateDropdown = screen.getByLabelText("State");
-        fireEvent.change(stateDropdown, { target: { value: "Done" } });
-
-        // Verify that fetchTasks is called after flagSearch changes
-        await waitFor(() => {
-            expect(mockFetchTasks).toHaveBeenCalled();
-        });
-
-        // Ensure fetchTasks is called the correct number of times
-        expect(mockFetchTasks).toHaveBeenCalledTimes(3);
-    });*/
+    
 });
 
