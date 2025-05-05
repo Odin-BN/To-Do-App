@@ -14,7 +14,7 @@ A simple and efficient To Do management application.
 1. Clone the repository:
    ```bash
    git clone https://github.com/Odin-BN/To-Do-App
-   cd To_Do_App
+   cd To-Do-App
    ```
 
 2. Run the application using Docker Compose:
