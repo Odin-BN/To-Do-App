@@ -31,7 +31,7 @@ const DeployTable: React.FC = () => {
      */
     useEffect(() => {
         fetchAndSetTasks(currentPage, itemsPerPage, sortPriority, sortDueDate);
-    }, [sortPriority, sortDueDate, tasks]);
+    }, [sortPriority, sortDueDate, tasks, currentPage]);
 
 
     const handleEditClick = (task: Task) => {

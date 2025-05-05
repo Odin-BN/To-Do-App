@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import AverageTimeContext from '../context/AverageTimeContext';
+import AverageTimeContext from "../context/AverageTimeContext";
 
 /**
  * AveragesBox Component
@@ -18,6 +18,8 @@ const AveragesBox: React.FC = () => {
 
     return (
         <div
+            role="region"
+            aria-label="Average time to finish tasks"
             style={{
                 border: "2px solid black", // Adds a border around the box.
                 display: "flex", // Enables flexbox layout.
