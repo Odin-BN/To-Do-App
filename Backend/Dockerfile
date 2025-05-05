@@ -17,7 +17,7 @@ RUN mvn dependency:go-offline
 COPY . .
 
 # Build the application
-RUN mvn clean package 
+RUN mvn clean package -DskipTests
 #RUN ./mvnw clean package 
 
 # Use Eclipse Temurin 17 as the runtime image

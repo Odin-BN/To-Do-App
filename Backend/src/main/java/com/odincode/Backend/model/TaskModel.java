@@ -39,6 +39,27 @@ public class TaskModel {
     }
 
     /**
+     * Constructor to initialize a TaskModel object with the given parameters.
+     *
+     * @param id The unique identifier for the task.
+     * @param name The name of the task.
+     * @param priority The priority level of the task.
+     * @param createDate The timestamp when the task was created.
+     * @param doneDate The timestamp when the task was marked as done.
+     * @param dueDate The optional due date for the task.
+     * @param flag The completion status of the task (true for Done, false for Undone).
+     */
+    public TaskModel(Long id, String name, String priority, LocalDateTime createDate, LocalDateTime doneDate, String dueDate, boolean flag) {
+        this.id = id;
+        this.name = name;
+        this.priority = priority;
+        this.createDate = createDate;
+        this.doneDate = doneDate;
+        this.dueDate = dueDate;
+        this.flag = flag;
+    }
+
+    /**
      * Retrieves the unique identifier of the task.
      *
      * @return The task's ID.
@@ -108,6 +129,15 @@ public class TaskModel {
      */
     public void setFlag(boolean flag) {
         this.flag = flag;
+    }
+
+    /**
+     * Retrieves the completion status of the task.
+     *
+     * @return True if the task is done, false otherwise.
+     */
+    public boolean isFlag() {
+        return flag;
     }
 
     /**

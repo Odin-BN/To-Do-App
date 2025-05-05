@@ -33,6 +33,23 @@ public class TaskOUT {
     }
 
     /**
+     * Constructor to initialize a TaskOUT object with the given parameters.
+     *
+     * @param id The unique identifier for the task.
+     * @param name The name of the task.
+     * @param priority The priority level of the task.
+     * @param dueDate The optional due date for the task.
+     * @param flag The completion status of the task (true for Done, false for Undone).
+     */
+    public TaskOUT(Long id, String name, String priority, String dueDate, boolean flag) {
+        this.id = id;
+        this.name = name;
+        this.priority = priority;
+        this.dueDate = dueDate;
+        this.flag = flag;
+    }
+
+    /**
      * Retrieves the unique identifier of the task.
      *
      * @return The task's ID.

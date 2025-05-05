@@ -1,32 +1,27 @@
-# Use Node.js 18 as the base image
+#Image from Node 18
 FROM node:18 AS build
 
-# Set the working directory
+#Work directoru
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code
+#Copy the file of the frontend
+#COPY package.json package-lock.json ./
 COPY . .
 
-# Build the application
+RUN npm install
+
+#Copy the rest of the files 
+#COPY . .
 RUN npm run build
 
-# Use a lightweight server to serve the build
-FROM node:18 AS serve
+#Using an image from Nginx
+FROM nginx:alpine AS runner
 
-# Install vite globally for preview
-RUN npm install -g vite
+#WORKDIR /app
 
-# Copy the build artifacts from the previous stage
-COPY --from=build /app/dist /app/dist
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Expose port 8080
+#Expose port 8080
 EXPOSE 8080
 
-# Serve the application
-CMD ["vite", "preview", "--port", "8080"]
+CMD ["nginx", "-g", "daemon off;"]

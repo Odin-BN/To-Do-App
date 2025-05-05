@@ -27,7 +27,7 @@ public class TaskRepositoryTest {
 
         TaskAdd taskAdd = new TaskAdd("", "", "");
         taskAdd.setName("Test Task");
-        taskAdd.setDeadline("02/08/2025");
+        taskAdd.setDeadline("2025-05-16");
         taskAdd.setPriority("High");
 
         taskRepository.save(taskAdd);
