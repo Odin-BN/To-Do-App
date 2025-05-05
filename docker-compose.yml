@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  frontend:
+    # Define the frontend service
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Map port 8080 on the host to port 8080 in the container
+    volumes:
+      - ./Frontend:/app # Mount the frontend code for development
+    container_name: frontend
+
+  backend:
+    # Define the backend service
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090" # Map port 9090 on the host to port 9090 in the container
+    volumes:
+      - ./Backend:/app # Mount the backend code for development
+    container_name: backend
+    depends_on:
+      - frontend # Ensure the backend starts after the frontend
